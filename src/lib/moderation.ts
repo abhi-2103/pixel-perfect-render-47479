@@ -93,6 +93,22 @@ export function analyze(text: string, s: Settings): Result {
   return { scores, risk, confidence, level: riskLevel(risk), decision, hits: [...hits], explanation, top };
 }
 
+export function fromAi(ai: { scores: Record<string, number>; hits: string[]; explanation: string; confidence: number }, s: Settings, text = ""): Result {
+  const scores = {} as Record<Category, number>;
+  for (const c of CATEGORIES) scores[c] = ai.scores[c] ?? 0;
+  const lower = text.toLowerCase();
+  const blocked = s.blocked.some((b) => b && lower.includes(b.toLowerCase()));
+  const sorted = [...CATEGORIES].sort((a, b) => scores[b] * s.weights[b] - scores[a] * s.weights[a]);
+  const maxW = scores[sorted[0]] * s.weights[sorted[0]];
+  const second = scores[sorted[1]] * s.weights[sorted[1]];
+  let risk = Math.round(Math.min(100, maxW * 0.85 + second * 0.15));
+  if (blocked) risk = Math.max(risk, 90);
+  const decision: Decision =
+    risk >= s.rejectAt ? "REJECTED" : risk >= s.reviewAt ? "HUMAN REVIEW" : risk >= s.approveBelow ? "FLAGGED" : "APPROVED";
+  const top = sorted.filter((c) => scores[c] >= 40).slice(0, 3);
+  return { scores, risk, confidence: ai.confidence, level: riskLevel(risk), decision, hits: ai.hits, explanation: ai.explanation, top };
+}
+
 export function highlight(text: string, hits: string[]) {
   if (!hits.length) return [{ t: text, hit: false }];
   const re = new RegExp(`(${hits.map((h) => h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
