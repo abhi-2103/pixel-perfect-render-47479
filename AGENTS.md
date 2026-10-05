@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Moderation scoring lives in src/lib/moderation.ts (in-browser rule engine) and demo data in src/data/*.json converted from the uploaded datasets; swap for a server AI call when a backend is added.
