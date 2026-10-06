@@ -32,5 +32,5 @@ export async function videoFrames(file: File, count = 8): Promise<string[]> {
 }
 
 export async function blobToBase64(b: Blob) {
-  return (await fileToDataUrl(b)).split(",")[1];
+  return (await fileToDataUrl(b)).split(",")[1] ?? "";
 }
