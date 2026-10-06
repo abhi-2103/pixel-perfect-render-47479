@@ -7,7 +7,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/AppShell";
 import { Textarea } from "@/components/ui/textarea";
 import { fromAi, highlight, label, riskToken, useSettings, type Result } from "@/lib/moderation";
-import { aiModerate } from "@/lib/ai-moderation.functions";
+import { aiModerate, type ModInput } from "@/lib/ai-moderation.functions";
 import { blobToBase64, fileToDataUrl, resizeImage, videoFrames } from "@/lib/media";
 import samples from "@/data/samples.json";
 
@@ -71,7 +71,7 @@ function Moderate() {
     if (!ready || busy) return;
     setBusy(true); setRes(null);
     try {
-      let payload: Parameters<typeof aiModerate>[0]["data"] = { kind, text: text.trim() || undefined };
+      let payload: ModInput = { kind, text: text.trim() || undefined };
       let shown: string[] = [];
       if (kind === "image" && file) { shown = [await resizeImage(await fileToDataUrl(file))]; payload.images = shown; }
       if (kind === "video" && file) {

@@ -11,11 +11,12 @@ const Input = z.object({
   kind: z.enum(["text", "image", "video", "voice"]),
 });
 
+export type ModInput = z.infer<typeof Input>;
 export type AiResult = {
   scores: Record<string, number>;
   hits: string[];
   explanation: string;
-  transcript?: string;
+  transcript?: string | undefined;
   confidence: number;
 };
 
