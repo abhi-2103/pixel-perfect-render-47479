@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Moderation scoring lives in src/lib/moderation.ts (in-browser rule engine) and demo data in src/data/*.json converted from the uploaded datasets; swap for a server AI call when a backend is added.
+- Moderation analysis runs server-side via AI (src/lib/ai-moderation.functions.ts) for text/image/video/voice; the browser only prepares media (frames, audio) — keeps the AI key off the client.

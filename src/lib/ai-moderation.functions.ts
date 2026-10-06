@@ -11,11 +11,12 @@ const Input = z.object({
   kind: z.enum(["text", "image", "video", "voice"]),
 });
 
+export type ModInput = z.infer<typeof Input>;
 export type AiResult = {
   scores: Record<string, number>;
   hits: string[];
   explanation: string;
-  transcript?: string;
+  transcript?: string | undefined;
   confidence: number;
 };
 
@@ -23,7 +24,7 @@ async function transcribe(apiKey: string, a: { base64: string; mime: string; nam
   const bytes = Uint8Array.from(atob(a.base64), (c) => c.charCodeAt(0));
   if (bytes.length > 24 * 1024 * 1024) throw new Error("Audio is too large (max 24 MB).");
   const form = new FormData();
-  form.append("model", "google/gemini-3.5-transcribe");
+  form.append("model", "openai/gpt-transcribe");
   form.append("file", new File([bytes], a.name, { type: a.mime }), a.name);
   form.append("response_format", "json");
   const r = await fetch(`${GATEWAY}/v1/audio/transcriptions`, { method: "POST", headers: { Authorization: `Bearer ${apiKey}` }, body: form });
